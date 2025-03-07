@@ -1,8 +1,9 @@
 {
-  "name": "nhkondemand-downloader",
+  "name": "html5-sse-hands-on",
   "version": "1.0.0",
   "main": "main.js",
-  "license": "UNLICENSED",
+  "author": "Taro Seo",
+  "license": "MIT",
   "dependencies": {
     "@fastify/compress": "^8.0.1",
     "@fastify/cors": "^10.0.2",
