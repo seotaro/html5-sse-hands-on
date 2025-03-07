@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSE Client</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    #output {
+      border: 1px solid #ddd;
+      padding: 10px;
+      width: 100%;
+      height: 300px;
+      overflow-y: auto;
+      background-color: #f9f9f9;
+    }
+
+    .error {
+      color: red;
+    }
+
+    .success {
+      color: green;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Server-Sent Events (SSE) クライアント</h1>
+  <p>サーバーからのメッセージをリアルタイムで表示します。</p>
+
+  <label for="server-url">SSE サーバーURL:</label>
+  <input type="text" id="server-url" value="http://localhost:8080/events" style="width: 80%;">
+  <button onclick="connectSSE()">接続</button>
+  <button onclick="disconnectSSE()">切断</button>
+
+  <h2>受信データ:</h2>
+  <div id="output"></div>
+  <script>
+    // ホストしているオリジンで書き換える
+    document.getElementById("server-url").value = window.location.origin + "/events";
+
+    let eventSource = null;
+
+    function connectSSE() {
+      const serverUrl = document.getElementById("server-url").value;
+
+      if (eventSource) {
+        eventSource.close();
+      }
+
+      eventSource = new EventSource(serverUrl);
+
+      eventSource.onopen = () => {
+        logMessage("✅ 接続成功: " + serverUrl, "success");
+      };
+
+      eventSource.onmessage = (event) => {
+        logMessage("📩 受信: " + event.data);
+      };
+
+      eventSource.onerror = (error) => {
+        logMessage("❌ エラー: SSE 接続が切断されました", "error");
+        eventSource.close();
+        eventSource = null;
+      };
+    }
+
+    function disconnectSSE() {
+      if (eventSource) {
+        eventSource.close();
+        eventSource = null;
+        logMessage("🔌 接続を手動で切断しました", "error");
+      }
+    }
+
+    function logMessage(message, type = "") {
+      const output = document.getElementById("output");
+      const div = document.createElement("div");
+      div.textContent = message;
+      if (type) div.classList.add(type);
+      output.appendChild(div);
+      output.scrollTop = output.scrollHeight;
+    }
+  </script>
+
+</body>
+
+</html>
